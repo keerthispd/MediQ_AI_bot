@@ -1,0 +1,23 @@
+#environment variables
+venv/
+.env
+.env.example
+
+__pycache__/
+backend/__pycache__/
+backend/models/__pycache__/
+backend/routes/__pycache__/
+backend/services/__pycache__/
+backend/utils/__pycache__/
+
+node_modules/
+
+#database files
+database/
+backend.db
+
+uploads/
+dist/
+.env
+
+frontend/build/

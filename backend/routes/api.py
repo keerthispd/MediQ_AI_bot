@@ -27,7 +27,7 @@ def get_db():
         db.close()
 
 
-@router.post("/chat")
+'''@router.post("/chat")
 async def chat(message: str = Form(...), db=Depends(get_db)):
     # Safety layer: check for prohibited content
     allowed, found_prohibited = check_message_for_safety(message)
@@ -60,19 +60,51 @@ async def chat(message: str = Form(...), db=Depends(get_db)):
     try:
         resp = generate_response(message)
     except Exception as e:
-        print("========== API ERROR ==========")
-        print(type(e).__name__)
-    print(str(e))
-    print("================================")
+        print("AI Error:", str(e))
 
-    resp = f"API Error: {type(e).__name__}: {str(e)}"
+        resp = (
+            "Sorry, I'm having trouble contacting the AI model. "
+            "Please try again later."
+        )
 
-    interaction = Interaction(user_message=message, assistant_reply=resp, redflag=False)
+    interaction = Interaction(
+        user_message=message,
+        assistant_reply=resp,
+        redflag=False
+    )
+
     db.add(interaction)
     db.commit()
+
     return JSONResponse({"reply": resp})
 
+'''
+@router.post("/chat")
+async def chat(message: str = Form(...)):
 
+    try:
+        resp = generate_response(message)
+
+        print("Generated response:", resp)
+        print("Type:", type(resp))
+
+        return JSONResponse({
+            "reply": str(resp)
+        })
+
+    except Exception as e:
+        print("========== API ERROR ==========")
+        print(type(e).__name__)
+        print(str(e))
+        print("================================")
+
+        error_msg = "Sorry, the AI model is currently experiencing high demand. Please try again later."
+
+        return JSONResponse(
+            {"reply": error_msg},
+            status_code=503
+        )
+    
 @router.post("/upload")
 async def upload(file: UploadFile = File(...)):
     try:
