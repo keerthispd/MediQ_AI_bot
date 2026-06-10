@@ -50,16 +50,31 @@ export default function Chat({ messages, setMessages, draft, setDraft }) {
     setUploading(true);
     const form = new FormData();
     form.append('file', f);
+    
+    // Pass the user's current draft as a query alongside the file upload
+    const text = (draft || '').trim();
+    if (text) {
+      form.append('message', text);
+      setMessages((m) => [...m, { role: 'user', text: `[Uploaded File: ${f.name}]\nQuery: ${text}` }]);
+    } else {
+      setMessages((m) => [...m, { role: 'user', text: `[Uploaded File: ${f.name}]` }]);
+    }
+
     try {
       const res = await axios.post('/api/upload', form, {
         headers: { 'Content-Type': 'multipart/form-data' }
       });
-      const filename = res.data.filename || 'uploaded';
-      setMessages((m) => [...m, { role: 'assistant', text: `File uploaded: ${filename}` }]);
+      const reply = res.data.reply;
+      if (reply) {
+        setMessages((m) => [...m, { role: 'assistant', text: reply }]);
+      } else {
+        setMessages((m) => [...m, { role: 'assistant', text: `File uploaded successfully.` }]);
+      }
     } catch (err) {
-      setMessages((m) => [...m, { role: 'assistant', text: 'Upload failed' }]);
+      setMessages((m) => [...m, { role: 'assistant', text: 'Upload or processing failed.' }]);
     } finally {
       setUploading(false);
+      setDraft('');
       if (fileRef.current) fileRef.current.value = null;
     }
   }
@@ -132,6 +147,9 @@ export default function Chat({ messages, setMessages, draft, setDraft }) {
         <div>
           <strong>Upload a file</strong>
           <p>Share a medical image or report for the assistant to store and review later.</p>
+          <p className="privacy-notice" style={{ fontSize: '0.85em', color: '#666', marginTop: '4px' }}>
+            <em>Privacy Notice: Please ensure you remove any personally identifiable information (PII) before uploading. Uploaded files are processed securely for educational purposes only.</em>
+          </p>
         </div>
         <div className="upload-row">
           <input type="file" onChange={uploadFile} ref={fileRef} disabled={uploading} />

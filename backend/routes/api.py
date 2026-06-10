@@ -3,7 +3,7 @@ from fastapi.responses import JSONResponse
 from typing import Optional
 import os
 
-from backend.services.model_stub import generate_response
+from backend.services.model_stub import generate_response, generate_file_summary
 from backend.services.safety import check_message_for_safety
 from backend.services.redflag import detect_redflags
 from backend.utils.file_utils import save_upload_file
@@ -27,7 +27,7 @@ def get_db():
         db.close()
 
 
-'''@router.post("/chat")
+@router.post("/chat")
 async def chat(message: str = Form(...), db=Depends(get_db)):
     # Safety layer: check for prohibited content
     allowed, found_prohibited = check_message_for_safety(message)
@@ -78,39 +78,16 @@ async def chat(message: str = Form(...), db=Depends(get_db)):
 
     return JSONResponse({"reply": resp})
 
-'''
-@router.post("/chat")
-async def chat(message: str = Form(...)):
-
-    try:
-        resp = generate_response(message)
-
-        print("Generated response:", resp)
-        print("Type:", type(resp))
-
-        return JSONResponse({
-            "reply": str(resp)
-        })
-
-    except Exception as e:
-        print("========== API ERROR ==========")
-        print(type(e).__name__)
-        print(str(e))
-        print("================================")
-
-        error_msg = "Sorry, the AI model is currently experiencing high demand. Please try again later."
-
-        return JSONResponse(
-            {"reply": error_msg},
-            status_code=503
-        )
-    
 @router.post("/upload")
-async def upload(file: UploadFile = File(...)):
+async def upload(file: UploadFile = File(...), message: Optional[str] = Form(None)):
     try:
         dest = await save_upload_file(file, dest_folder="uploads")
-        return {"filename": dest}
+        
+        # Generate file insights and summary using Gemini
+        reply = generate_file_summary(dest, message or "")
+        return {"filename": dest, "reply": reply}
     except Exception as e:
+        print(f"Upload Error: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
 
 
