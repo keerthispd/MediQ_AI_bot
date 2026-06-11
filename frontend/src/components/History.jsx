@@ -1,19 +1,21 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 
-export default function History({ limit = 50, onReplay }) {
+export default function History({ limit = 50, onReplay, user }) {
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(false);
   const [filter, setFilter] = useState('');
 
   useEffect(() => {
-    fetchHistory();
-  }, []);
+    if (user) {
+      fetchHistory();
+    }
+  }, [user]);
 
   async function fetchHistory() {
     setLoading(true);
     try {
-      const res = await axios.get(`/api/history?limit=${limit}`);
+      const res = await axios.get(`/api/history?limit=${limit}&username=${encodeURIComponent(user)}`);
       setItems(res.data.items || []);
     } catch (e) {
       console.error('Failed to load history', e);
@@ -32,7 +34,7 @@ export default function History({ limit = 50, onReplay }) {
     if (!window.confirm('Are you sure you want to permanently delete all conversation history? This cannot be undone.')) return;
     setLoading(true);
     try {
-      await axios.delete('/api/history');
+      await axios.delete(`/api/history?username=${encodeURIComponent(user)}`);
       setItems([]);
     } catch (e) {
       console.error('Failed to clear history', e);

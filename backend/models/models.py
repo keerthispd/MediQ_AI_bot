@@ -8,6 +8,7 @@ Base = declarative_base()
 class Interaction(Base):
     __tablename__ = 'interactions'
     id = Column(Integer, primary_key=True, index=True)
+    username = Column(String, default="default")
     user_message = Column(Text, nullable=False)
     assistant_reply = Column(Text, nullable=True)
     redflag = Column(Boolean, default=False)

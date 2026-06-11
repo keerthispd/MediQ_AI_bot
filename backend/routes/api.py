@@ -28,7 +28,7 @@ def get_db():
 
 
 @router.post("/chat")
-async def chat(message: str = Form(...), db=Depends(get_db)):
+async def chat(message: str = Form(...), username: str = Form("default"), db=Depends(get_db)):
     # Safety layer: check for prohibited content
     allowed, found_prohibited = check_message_for_safety(message)
     if not allowed:
@@ -36,7 +36,7 @@ async def chat(message: str = Form(...), db=Depends(get_db)):
             "I can't help with topics involving self-harm or suicide. "
             "If you are in immediate danger, please contact local emergency services or a crisis line."
         )
-        interaction = Interaction(user_message=message, assistant_reply=reply, redflag=False, redflag_details=str(found_prohibited))
+        interaction = Interaction(user_message=message, assistant_reply=reply, redflag=False, redflag_details=str(found_prohibited), username=username)
         db.add(interaction)
         db.commit()
         return JSONResponse({"reply": reply, "blocked": True})
@@ -51,7 +51,7 @@ async def chat(message: str = Form(...), db=Depends(get_db)):
                     f"({details}). Please seek immediate medical attention "
                     f"or call emergency services."
                 )
-        interaction = Interaction(user_message=message, assistant_reply=reply, redflag=True, redflag_details=details)
+        interaction = Interaction(user_message=message, assistant_reply=reply, redflag=True, redflag_details=details, username=username)
         db.add(interaction)
         db.commit()
         return JSONResponse({"reply": reply, "redflag": True})
@@ -70,7 +70,8 @@ async def chat(message: str = Form(...), db=Depends(get_db)):
     interaction = Interaction(
         user_message=message,
         assistant_reply=resp,
-        redflag=False
+        redflag=False,
+        username=username
     )
 
     db.add(interaction)
@@ -79,7 +80,7 @@ async def chat(message: str = Form(...), db=Depends(get_db)):
     return JSONResponse({"reply": resp})
 
 @router.post("/upload")
-async def upload(file: UploadFile = File(...), message: Optional[str] = Form(None)):
+async def upload(file: UploadFile = File(...), message: Optional[str] = Form(None), username: str = Form("default")):
     try:
         dest = await save_upload_file(file, dest_folder="uploads")
         
@@ -92,9 +93,9 @@ async def upload(file: UploadFile = File(...), message: Optional[str] = Form(Non
 
 
 @router.get("/history")
-def history(limit: int = 50, db=Depends(get_db)):
+def history(limit: int = 50, username: str = "default", db=Depends(get_db)):
     """Return the most recent interactions (desc by created_at)."""
-    items = db.query(Interaction).order_by(Interaction.created_at.desc()).limit(limit).all()
+    items = db.query(Interaction).filter(Interaction.username == username).order_by(Interaction.created_at.desc()).limit(limit).all()
     results = []
     for it in items:
         results.append({
@@ -108,7 +109,7 @@ def history(limit: int = 50, db=Depends(get_db)):
     return {"items": results}
 
 @router.delete("/history")
-def delete_history(db=Depends(get_db)):
-    db.query(Interaction).delete()
+def delete_history(username: str = "default", db=Depends(get_db)):
+    db.query(Interaction).filter(Interaction.username == username).delete()
     db.commit()
     return {"status": "cleared"}
