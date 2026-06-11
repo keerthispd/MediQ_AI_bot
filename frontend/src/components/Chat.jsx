@@ -80,45 +80,41 @@ export default function Chat({ messages, setMessages, draft, setDraft }) {
   }
 
   return (
-    <section className="chat-card">
-      <div className="chat-header">
+      <section className="chat-card" style={{ backgroundColor: '#ffffff', borderRadius: '16px', boxShadow: '0 10px 40px rgba(0,0,0,0.08)', border: '1px solid #e2e8f0', overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
+        <div className="chat-header" style={{ padding: '24px', background: 'linear-gradient(135deg, #0369a1 0%, #0f766e 100%)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <div>
-          <span className="section-kicker">Conversation</span>
-          <h2>Ask a symptom, upload a report, or replay a previous topic.</h2>
-        </div>
-        <div className="chat-status">
-          <span className="status-dot" />
-          Ready
+          <h2 style={{ margin: 0, fontSize: '1.4rem', color: '#ffffff', fontWeight: '700', letterSpacing: '0.5px' }}>AI Medical Assistant</h2>
+          <p style={{ margin: '6px 0 0', fontSize: '0.95rem', color: '#ccfbf1' }}>Empowering your health with smart insights</p>
         </div>
       </div>
 
-      <div className="message-stream" aria-live="polite">
+      <div className="message-stream" aria-live="polite" style={{ padding: '24px', flex: 1, overflowY: 'auto', minHeight: '450px', backgroundColor: '#f8fafc' }}>
         {(messages || []).length === 0 && (
-          <div className="empty-state">
-            <strong>Start with a question.</strong>
-            <p>
-              Try one of the suggested prompts above, type your own symptoms, or attach a report to discuss.
+          <div className="empty-state" style={{ textAlign: 'center', padding: '40px 20px', backgroundColor: '#ffffff', borderRadius: '12px', border: '1px solid #e2e8f0', boxShadow: '0 4px 15px rgba(0,0,0,0.03)', color: '#0f172a', margin: '40px auto', maxWidth: '80%' }}>
+            <div style={{ fontSize: '3rem', marginBottom: '16px' }}>🩺</div>
+            <strong style={{ fontSize: '1.15rem', color: '#0369a1', display: 'block', marginBottom: '10px' }}>Welcome to your Medical Assistant</strong>
+            <p style={{ maxWidth: '400px', margin: '0 auto', color: '#64748b', lineHeight: '1.6', fontSize: '0.95rem' }}>
+              Describe your symptoms, ask general health questions, or securely upload a medical report for an educational summary.
             </p>
           </div>
         )}
 
         {(messages || []).map((m, i) => (
-          <div key={i} className={`message-row ${m.role === 'user' ? 'user' : 'assistant'}`}>
-            <div className="message-bubble">
-              <div className="message-meta">
+          <div key={i} className={`message-row ${m.role === 'user' ? 'user' : 'assistant'}`} style={{ display: 'flex', flexDirection: 'column', alignItems: m.role === 'user' ? 'flex-end' : 'flex-start', marginBottom: '16px' }}>
+            <div className="message-bubble" style={{ background: m.role === 'user' ? 'linear-gradient(135deg, #0ea5e9 0%, #14b8a6 100%)' : '#ffffff', color: m.role === 'user' ? '#ffffff' : '#1e293b', padding: '16px 20px', borderRadius: m.role === 'user' ? '16px 16px 0 16px' : '16px 16px 16px 0', maxWidth: '85%', boxShadow: m.role === 'user' ? '0 4px 15px rgba(14, 165, 233, 0.2)' : '0 4px 15px rgba(0,0,0,0.05)', border: m.role === 'assistant' ? '1px solid #e2e8f0' : 'none' }}>
+              <div className="message-meta" style={{ fontSize: '0.8rem', marginBottom: '4px', opacity: 0.8, display: 'flex', gap: '8px', alignItems: 'center' }}>
                 <strong>{m.role === 'user' ? 'You' : 'Assistant'}</strong>
-                {m.blocked && <span className="badge badge-danger">Blocked</span>}
-                {m.redflag && <span className="badge badge-warning">Red flag</span>}
+                {m.blocked && <span className="badge badge-danger" style={{ backgroundColor: '#ef4444', color: '#fff', padding: '2px 6px', borderRadius: '4px' }}>Blocked</span>}
+                {m.redflag && <span className="badge badge-warning" style={{ backgroundColor: '#f59e0b', color: '#fff', padding: '2px 6px', borderRadius: '4px' }}>Red flag</span>}
               </div>
-              <p>{m.text}</p>
+              <p style={{ margin: 0, whiteSpace: 'pre-wrap', lineHeight: '1.5' }}>{m.text}</p>
             </div>
           </div>
         ))}
       </div>
 
-      <div className="composer-panel">
-        <label className="composer-label" htmlFor="message-input">Type your message</label>
-        <div className="composer-row">
+      <div className="composer-panel" style={{ padding: '20px 24px', borderTop: '1px solid #e2e8f0', backgroundColor: '#ffffff' }}>
+        <div className="composer-row" style={{ display: 'flex', gap: '12px', alignItems: 'flex-start' }}>
           <textarea
             id="message-input"
             ref={textRef}
@@ -132,28 +128,25 @@ export default function Chat({ messages, setMessages, draft, setDraft }) {
             }}
             placeholder="Describe symptoms, ask about a report, or request next steps..."
             disabled={loading}
-            rows={3}
+            rows={2}
+            style={{ flex: 1, padding: '12px', borderRadius: '8px', border: '1px solid #cbd5e1', resize: 'none', fontFamily: 'inherit', fontSize: '0.95rem' }}
           />
-          <button className="primary-button" onClick={send} disabled={loading} type="button">
-            {loading ? 'Sending…' : 'Send message'}
+          <button className="primary-button" onClick={send} disabled={loading} type="button" style={{ background: 'linear-gradient(135deg, #0ea5e9 0%, #14b8a6 100%)', color: '#fff', padding: '12px 28px', borderRadius: '8px', border: 'none', cursor: loading ? 'not-allowed' : 'pointer', fontWeight: '600', transition: 'all 0.2s', alignSelf: 'stretch', opacity: loading ? 0.7 : 1, boxShadow: '0 4px 10px rgba(14,165,233,0.2)' }}>
+            {loading ? 'Sending…' : 'Send'}
           </button>
         </div>
-        <div className="composer-hint">
-          Press Enter in the field or click Send message. Keep emergencies out of the normal chat flow.
-        </div>
-      </div>
-
-      <div className="upload-panel">
-        <div>
-          <strong>Upload a file</strong>
-          <p>Share a medical image or report for the assistant to store and review later.</p>
-          <p className="privacy-notice" style={{ fontSize: '0.85em', color: '#666', marginTop: '4px' }}>
-            <em>Privacy Notice: Please ensure you remove any personally identifiable information (PII) before uploading. Uploaded files are processed securely for educational purposes only.</em>
-          </p>
-        </div>
-        <div className="upload-row">
-          <input type="file" onChange={uploadFile} ref={fileRef} disabled={uploading} />
-          {uploading && <span className="upload-state">Uploading…</span>}
+        
+        <div className="upload-panel" style={{ marginTop: '16px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '16px 20px', backgroundColor: '#f0fdfa', border: '1px dashed #5eead4', borderRadius: '12px' }}>
+          <div>
+            <strong style={{ fontSize: '0.9rem', color: '#0f172a' }}>Upload Medical Report</strong>
+            <p style={{ margin: 0, fontSize: '0.8rem', color: '#64748b' }}>Securely processed for educational insights. Remove PII before upload.</p>
+          </div>
+          <div className="upload-row" style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+            <label className="upload-label" style={{ cursor: uploading ? 'not-allowed' : 'pointer', backgroundColor: '#ffffff', padding: '10px 18px', borderRadius: '8px', fontSize: '0.9rem', fontWeight: '600', color: '#0f766e', border: '1px solid #99f6e4', boxShadow: '0 2px 4px rgba(0,0,0,0.02)', transition: 'all 0.2s' }}>
+              {uploading ? 'Uploading...' : 'Choose File'}
+              <input type="file" onChange={uploadFile} ref={fileRef} disabled={uploading} style={{ display: 'none' }} />
+            </label>
+          </div>
         </div>
       </div>
     </section>

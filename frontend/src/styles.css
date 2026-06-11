@@ -4,14 +4,14 @@
 
 :root {
 	--bg: #f4f7fb;
-	--bg-deep: #e9eff8;
-	--panel: rgba(255, 255, 255, 0.78);
-	--panel-strong: #ffffff;
+	--bg-deep: #e3edfc;
+	--panel: rgba(143, 240, 240, 0.78);
+	--panel-strong: #d4f4f6;
 	--line: rgba(72, 94, 126, 0.14);
 	--text: #14304a;
 	--muted: #5f738a;
-	--accent: #e53f37;
-	--accent-soft: rgba(229, 63, 55, 0.12);
+	--accent: #73dad2;
+	--accent-soft: rgba(118, 248, 248, 0.12);
 	--warning: #f59e0b;
 	--shadow: 0 24px 80px rgba(15, 33, 55, 0.12);
 }
@@ -26,20 +26,6 @@ body {
 	margin: 0;
 	font-family: "Segoe UI", "Aptos", "Inter", system-ui, sans-serif;
 	color: var(--text);
-	background:
-		radial-gradient(circle at top left, rgba(229, 63, 55, 0.14), transparent 30%),
-		radial-gradient(circle at right top, rgba(70, 131, 255, 0.12), transparent 26%),
-		linear-gradient(180deg, #f9fbfe 0%, var(--bg) 100%);
-}
-
-body::before {
-	content: "";
-	position: fixed;
-	inset: 0;
-	pointer-events: none;
-	background-image: linear-gradient(rgba(20, 48, 74, 0.025) 1px, transparent 1px), linear-gradient(90deg, rgba(20, 48, 74, 0.025) 1px, transparent 1px);
-	background-size: 28px 28px;
-	opacity: 0.35;
 }
 
 button,
@@ -52,32 +38,6 @@ textarea {
 	position: relative;
 	min-height: 100vh;
 	overflow: hidden;
-}
-
-.app-background {
-	position: absolute;
-	border-radius: 999px;
-	filter: blur(18px);
-	pointer-events: none;
-	opacity: 0.75;
-	animation: floatBlob 12s ease-in-out infinite;
-}
-
-.app-background-a {
-	width: 220px;
-	height: 220px;
-	top: -60px;
-	right: -40px;
-	background: rgba(229, 63, 55, 0.16);
-}
-
-.app-background-b {
-	width: 180px;
-	height: 180px;
-	bottom: 40px;
-	left: -50px;
-	background: rgba(59, 130, 246, 0.12);
-	animation-delay: -5s;
 }
 
 .app-root {
@@ -95,7 +55,7 @@ textarea {
 	padding: 24px;
 	border: 1px solid var(--line);
 	border-radius: 28px;
-	background: linear-gradient(135deg, rgba(255,255,255,0.88), rgba(255,255,255,0.68));
+	background: linear-gradient(135deg, rgba(248, 251, 251, 0.88), rgba(255, 255, 255, 0.68));
 	box-shadow: var(--shadow);
 	backdrop-filter: blur(16px);
 	animation: fadeRise 540ms ease both;
@@ -142,7 +102,7 @@ textarea {
 }
 
 .pill-button {
-	border: 1px solid rgba(229, 63, 55, 0.18);
+	border: 1px solid rgba(203, 249, 250, 0.18);
 	background: var(--accent-soft);
 	color: var(--accent);
 	padding: 10px 14px;
@@ -167,7 +127,7 @@ textarea {
 .stat-card {
 	padding: 18px;
 	border-radius: 22px;
-	background: linear-gradient(180deg, #fff, #f7f9fc);
+	background: linear-gradient(180deg, #d4fff6, #f7f9fc);
 	border: 1px solid var(--line);
 	animation: fadeRise 600ms ease both;
 }
@@ -177,7 +137,7 @@ textarea {
 }
 
 .stat-card.muted {
-	background: linear-gradient(180deg, rgba(229, 63, 55, 0.08), rgba(255,255,255,0.95));
+	background: linear-gradient(180deg, rgba(229, 63, 55, 0.08), rgba(214, 248, 247, 0.95));
 }
 
 .stat-label {
