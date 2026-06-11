@@ -1,71 +1,244 @@
 # AI Medical Assistant Bot
 
-Project scaffold for the AI Medical Assistant (React frontend + FastAPI backend + SQLite).
+An AI-powered Medical Assistant built using **React**, **FastAPI**, **SQLite**, and **Google Gemini AI**. The application provides educational medical guidance, symptom triage, conversation history, safety filtering, red-flag detection, and medical report upload capabilities.
 
-Structure
+---
 
-medical-assistant/
-├── frontend/        # React
+## Features
+
+* AI-powered medical question answering using Gemini
+* Symptom triage and educational guidance
+* Medical emergency red-flag detection
+* Safety filtering for harmful content
+* Conversation history storage using SQLite
+* Medical report upload support
+* Modern React-based user interface
+* FastAPI backend with REST APIs
+
+---
+
+## Tech Stack
+
+### Frontend
+
+* React
+* Axios
+* CSS
+
+### Backend
+
+* FastAPI
+* SQLAlchemy
+* SQLite
+* Python
+
+### AI Integration
+
+* Google Gemini 2.5 Flash
+
+---
+
+## Project Structure
+
+```text
+MedicalAssistant_bot/
+
+├── frontend/
 │   ├── src/
-│   └── components/
-├── backend/         # FastAPI
+│   │   ├── components/
+│   │   ├── App.jsx
+│   │   └── index.js
+│   └── package.json
+│
+├── backend/
 │   ├── routes/
 │   ├── models/
 │   ├── services/
-│   └── utils/
+│   ├── utils/
+│   └── main.py
+│
 ├── database/
 ├── uploads/
 ├── docs/
+├── requirements.txt
 └── README.md
+```
 
-Quick start (backend)
+---
 
-1. Create a venv and install requirements:
+## Backend Setup
+
+### 1. Create Virtual Environment
 
 ```bash
 python -m venv venv
+```
+
+### 2. Activate Virtual Environment
+
+Windows:
+
+```bash
 venv\Scripts\activate
+```
+
+Linux / macOS:
+
+```bash
+source venv/bin/activate
+```
+
+### 3. Install Dependencies
+
+```bash
 pip install -r requirements.txt
+```
+
+### 4. Configure Environment Variables
+
+Create a `.env` file in the project root:
+
+```env
+GEMINI_API_KEY=your_gemini_api_key_here
+```
+
+### 5. Start Backend Server
+
+```bash
 uvicorn backend.main:app --reload
 ```
 
-Frontend: open `frontend/` and run your preferred React bootstrap (e.g. create-react-app).
+Backend will run on:
 
-Frontend quick start
+```text
+http://localhost:8000
+```
 
-1. From `frontend/` install dependencies and start:
+---
+
+## Frontend Setup
+
+Navigate to the frontend directory:
 
 ```bash
 cd frontend
+```
+
+Install dependencies:
+
+```bash
 npm install
+```
+
+Start development server:
+
+```bash
 npm start
 ```
 
-The frontend includes a proxy to `http://localhost:8000` so API calls to `/api/*` will be forwarded to the backend during development.
+Frontend will run on:
 
-Demo & deployment
+```text
+http://localhost:3000
+```
 
-See `docs/DEPLOYMENT.md` for detailed local demo and Docker Compose deployment instructions.
+---
 
-AI integration
+## API Endpoints
 
-1. Set `OPENAI_API_KEY` in your environment before starting the backend.
-2. The backend will call the OpenAI Chat Completions endpoint for non-blocked messages.
+### Health Check
 
-Provider selection
+```http
+GET /api/health
+```
 
-- To use OpenAI (default): set `AI_PROVIDER=openai` and `OPENAI_API_KEY`.
-- To use Gemini (or another provider): set `AI_PROVIDER=gemini`, and provide `GEMINI_API_URL` and `GEMINI_API_KEY`.
+### Chat with Assistant
 
-The Gemini integration expects a POST endpoint at `GEMINI_API_URL` that accepts a JSON body containing the prompt. The response parsing is best-effort — adjust `backend/services/ai_provider.py` if your provider uses a different schema.
+```http
+POST /api/chat
+```
 
-Retry and backoff
+### Upload Medical Report
 
-The AI provider implements retry and exponential backoff for transient errors and HTTP 429/5xx responses. Configure via environment variables:
+```http
+POST /api/upload
+```
 
-- `AI_MAX_RETRIES` (default `3`)
-- `AI_BASE_BACKOFF` (seconds, default `0.5`)
-- `AI_MAX_BACKOFF` (seconds, default `10`)
+### Conversation History
 
-The provider will also honor a `Retry-After` header when present.
+```http
+GET /api/history
+```
 
+---
+
+## Safety Features
+
+* Harmful-content filtering
+* Self-harm prevention responses
+* Medical emergency red-flag detection
+* Educational-use disclaimer
+* No direct diagnosis functionality
+
+---
+
+## Database
+
+The application stores:
+
+* User messages
+* Assistant responses
+* Red-flag information
+* Conversation timestamps
+
+Database engine:
+
+```text
+SQLite
+```
+
+---
+
+## Running the Full Application
+
+Start Backend:
+
+```bash
+uvicorn backend.main:app --reload
+```
+
+Start Frontend:
+
+```bash
+cd frontend
+npm start
+```
+
+Open:
+
+```text
+http://localhost:3000
+```
+
+---
+
+## Disclaimer
+
+This application is intended for educational and informational purposes only. It does not provide professional medical advice, diagnosis, or treatment. Always consult a qualified healthcare professional for medical concerns.
+
+---
+
+## Future Enhancements
+
+* User authentication
+* PDF report analysis
+* Voice-based interaction
+* Multi-language support
+* Cloud deployment
+* Mobile application integration
+
+---
+
+## Author
+
+Developed as an AI-powered healthcare assistance project using React, FastAPI, SQLite, and Google Gemini AI.
