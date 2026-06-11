@@ -1,4 +1,4 @@
-name: CI
+.name: CI
 
 on:
   push:
@@ -24,7 +24,7 @@ jobs:
 
       - name: Run tests
         run: |
-          pytest -q
+          export PYTHONPATH=. pytest -q
 
   build-images:
     runs-on: ubuntu-latest
