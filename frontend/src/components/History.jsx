@@ -28,10 +28,24 @@ export default function History({ limit = 50, onReplay }) {
     return (it.user_message || '').toLowerCase().includes(f) || (it.assistant_reply || '').toLowerCase().includes(f);
   });
 
+  async function clearHistory() {
+    if (!window.confirm('Are you sure you want to permanently delete all conversation history? This cannot be undone.')) return;
+    setLoading(true);
+    try {
+      await axios.delete('/api/history');
+      setItems([]);
+    } catch (e) {
+      console.error('Failed to clear history', e);
+    } finally {
+      setLoading(false);
+    }
+  }
+
   return (
     <section className="history-card" style={{ backgroundColor: '#ffffff', borderRadius: '16px', boxShadow: '0 10px 40px rgba(0,0,0,0.08)', border: '1px solid #e2e8f0', padding: '24px' }}>
-      <div className="history-header" style={{ marginBottom: '20px' }}>
+      <div className="history-header" style={{ marginBottom: '20px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <h3 style={{ margin: 0, fontSize: '1.25rem', color: '#0f766e' }}>Recent Conversations</h3>
+        <button onClick={clearHistory} disabled={items.length === 0} style={{ padding: '6px 12px', borderRadius: '6px', border: '1px solid #fca5a5', backgroundColor: '#fef2f2', color: '#ef4444', cursor: items.length === 0 ? 'not-allowed' : 'pointer', fontSize: '0.8rem', fontWeight: '600', opacity: items.length === 0 ? 0.5 : 1 }}>Clear All</button>
       </div>
 
       <div className="history-search" style={{ marginBottom: '16px' }}>

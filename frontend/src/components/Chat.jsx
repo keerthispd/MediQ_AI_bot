@@ -1,5 +1,7 @@
 import React, { useState, useRef } from 'react';
 import axios from 'axios';
+import ReactMarkdown from 'react-markdown';
+import html2pdf from 'html2pdf.js';
 
 export default function Chat({ messages, setMessages, draft, setDraft }) {
   const [loading, setLoading] = useState(false);
@@ -79,12 +81,34 @@ export default function Chat({ messages, setMessages, draft, setDraft }) {
     }
   }
 
+  const clearChat = () => {
+    if (window.confirm('Are you sure you want to clear the current chat?')) {
+      setMessages([]);
+    }
+  };
+
+  const downloadPDF = () => {
+    const element = document.querySelector('.message-stream');
+    const opt = {
+      margin:       0.5,
+      filename:     'Medical_Assistant_Report.pdf',
+      image:        { type: 'jpeg', quality: 0.98 },
+      html2canvas:  { scale: 2 },
+      jsPDF:        { unit: 'in', format: 'letter', orientation: 'portrait' }
+    };
+    html2pdf().set(opt).from(element).save();
+  };
+
   return (
       <section className="chat-card" style={{ backgroundColor: '#ffffff', borderRadius: '16px', boxShadow: '0 10px 40px rgba(0,0,0,0.08)', border: '1px solid #e2e8f0', overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
         <div className="chat-header" style={{ padding: '24px', background: 'linear-gradient(135deg, #0369a1 0%, #0f766e 100%)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <div>
           <h2 style={{ margin: 0, fontSize: '1.4rem', color: '#ffffff', fontWeight: '700', letterSpacing: '0.5px' }}>AI Medical Assistant</h2>
           <p style={{ margin: '6px 0 0', fontSize: '0.95rem', color: '#ccfbf1' }}>Empowering your health with smart insights</p>
+        </div>
+        <div style={{ display: 'flex', gap: '8px' }}>
+          <button onClick={downloadPDF} style={{ padding: '8px 12px', borderRadius: '6px', border: 'none', backgroundColor: 'rgba(255,255,255,0.2)', color: '#ffffff', cursor: 'pointer', fontWeight: '600', fontSize: '0.85rem', transition: 'background 0.2s' }} onMouseEnter={e => e.target.style.backgroundColor='rgba(255,255,255,0.3)'} onMouseLeave={e => e.target.style.backgroundColor='rgba(255,255,255,0.2)'}>📄 Export PDF</button>
+          <button onClick={clearChat} style={{ padding: '8px 12px', borderRadius: '6px', border: 'none', backgroundColor: 'rgba(239, 68, 68, 0.8)', color: '#ffffff', cursor: 'pointer', fontWeight: '600', fontSize: '0.85rem', transition: 'background 0.2s' }} onMouseEnter={e => e.target.style.backgroundColor='rgba(239, 68, 68, 1)'} onMouseLeave={e => e.target.style.backgroundColor='rgba(239, 68, 68, 0.8)'}>🗑️ Clear Chat</button>
         </div>
       </div>
 
@@ -107,7 +131,20 @@ export default function Chat({ messages, setMessages, draft, setDraft }) {
                 {m.blocked && <span className="badge badge-danger" style={{ backgroundColor: '#ef4444', color: '#fff', padding: '2px 6px', borderRadius: '4px' }}>Blocked</span>}
                 {m.redflag && <span className="badge badge-warning" style={{ backgroundColor: '#f59e0b', color: '#fff', padding: '2px 6px', borderRadius: '4px' }}>Red flag</span>}
               </div>
-              <p style={{ margin: 0, whiteSpace: 'pre-wrap', lineHeight: '1.5' }}>{m.text}</p>
+              <div className="markdown-body" style={{ margin: 0, lineHeight: '1.6', fontSize: '0.95rem' }}>
+                <ReactMarkdown
+                  components={{
+                    p: ({node, ...props}) => <p style={{ margin: '0 0 10px 0' }} {...props} />,
+                    ul: ({node, ...props}) => <ul style={{ margin: '0 0 10px 0', paddingLeft: '20px' }} {...props} />,
+                    ol: ({node, ...props}) => <ol style={{ margin: '0 0 10px 0', paddingLeft: '20px' }} {...props} />,
+                    h1: ({node, ...props}) => <h1 style={{ margin: '10px 0', fontSize: '1.2rem' }} {...props} />,
+                    h2: ({node, ...props}) => <h2 style={{ margin: '10px 0', fontSize: '1.1rem' }} {...props} />,
+                    h3: ({node, ...props}) => <h3 style={{ margin: '10px 0', fontSize: '1.05rem' }} {...props} />
+                  }}
+                >
+                  {m.text}
+                </ReactMarkdown>
+              </div>
             </div>
           </div>
         ))}

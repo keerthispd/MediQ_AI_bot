@@ -6,6 +6,38 @@ import History from './components/History';
 function App() {
   const [messages, setMessages] = useState([]);
   const [draft, setDraft] = useState('');
+  const [user, setUser] = useState(localStorage.getItem('medical_auth_user') || '');
+
+  const handleLogin = (e) => {
+    e.preventDefault();
+    const username = e.target.username.value.trim();
+    if (username) {
+      localStorage.setItem('medical_auth_user', username);
+      setUser(username);
+    }
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem('medical_auth_user');
+    setUser('');
+    setMessages([]);
+  };
+
+  if (!user) {
+    return (
+      <div className="app-shell" style={{ width: '100%', minHeight: '100vh', display: 'flex', justifyContent: 'center', alignItems: 'center', backgroundColor: '#f0f9ff' }}>
+        <div style={{ backgroundColor: '#ffffff', padding: '40px', borderRadius: '16px', boxShadow: '0 10px 40px rgba(0,0,0,0.08)', textAlign: 'center', maxWidth: '400px', width: '100%' }}>
+          <div style={{ fontSize: '3rem', marginBottom: '16px' }}>🛡️</div>
+          <h2 style={{ color: '#0369a1', marginBottom: '8px', marginTop: 0 }}>AI Medical Assistant</h2>
+          <p style={{ color: '#64748b', marginBottom: '24px' }}>Please sign in to access your secure medical portal.</p>
+          <form onSubmit={handleLogin} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+            <input name="username" type="text" placeholder="Enter your full name" required style={{ padding: '12px', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '1rem', outline: 'none' }} />
+            <button type="submit" style={{ background: 'linear-gradient(135deg, #0ea5e9 0%, #14b8a6 100%)', color: '#fff', padding: '12px', borderRadius: '8px', border: 'none', fontWeight: '600', cursor: 'pointer', fontSize: '1rem' }}>Sign In securely</button>
+          </form>
+        </div>
+      </div>
+    );
+  }
 
   const quickPrompts = [
     'I have a headache and mild fever.',
@@ -18,7 +50,10 @@ function App() {
       <main className="app-root" style={{ width: '100%', maxWidth: '1200px', margin: '0 auto', display: 'flex', flexDirection: 'column', gap: '24px', backgroundColor: 'rgba(255, 255, 255, 0.65)', padding: '32px', borderRadius: '24px', boxShadow: '0 20px 60px rgba(14, 165, 233, 0.1)', backdropFilter: 'blur(16px)', WebkitBackdropFilter: 'blur(16px)', border: '1px solid rgba(255, 255, 255, 0.8)' }}>
         <header className="hero-card" style={{ backgroundColor: 'rgba(19, 19, 149, 0.18)', backdropFilter: 'blur(8px)', WebkitBackdropFilter: 'blur(8px)', borderRadius: '16px', boxShadow: '0 4px 15px rgba(0,0,0,0.03)', border: '1px solid rgba(255, 255, 255, 0.8)', padding: '40px', display: 'flex', flexWrap: 'wrap', gap: '32px', justifyContent: 'space-between', alignItems: 'center' }}>
           <div className="hero-copy" style={{ flex: '1 1 400px' }}>
-            <span className="eyebrow" style={{ display: 'inline-block', backgroundColor: '#f0f9ff', color: '#0ea5e9', padding: '6px 12px', borderRadius: '20px', fontSize: '0.85rem', fontWeight: '600', marginBottom: '16px', letterSpacing: '0.5px' }}>AI Medical Assistant</span>
+            <span className="eyebrow" style={{ display: 'inline-block', backgroundColor: '#f0f9ff', color: '#0ea5e9', padding: '6px 12px', borderRadius: '20px', fontSize: '0.85rem', fontWeight: '600', marginBottom: '16px', letterSpacing: '0.5px' }}>
+              👤 Welcome, {user}
+            </span>
+            <button onClick={handleLogout} style={{ marginLeft: '12px', padding: '4px 10px', fontSize: '0.8rem', borderRadius: '12px', border: '1px solid #cbd5e1', backgroundColor: '#f8fafc', color: '#64748b', cursor: 'pointer' }}>Logout</button>
             <h1 style={{ margin: '0 0 16px', fontSize: '2rem', color: '#0f172a', lineHeight: '1.2' }}>Calm, clear medical guidance with safety built in.</h1>
             <p style={{ margin: '0 0 24px', fontSize: '1.05rem', color: '#475569', lineHeight: '1.6' }}>
               A friendly assistant for educational support, symptom triage, and report discussion.

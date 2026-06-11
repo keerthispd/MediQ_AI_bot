@@ -106,3 +106,9 @@ def history(limit: int = 50, db=Depends(get_db)):
             "created_at": it.created_at.isoformat() if it.created_at is not None else None,
         })
     return {"items": results}
+
+@router.delete("/history")
+def delete_history(db=Depends(get_db)):
+    db.query(Interaction).delete()
+    db.commit()
+    return {"status": "cleared"}
